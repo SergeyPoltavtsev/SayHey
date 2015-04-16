@@ -1,0 +1,85 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Apr 8, 2015, 9:39:37 AM
+    Author     : Sergey
+*/
+
+body{
+    width: 96%;
+    margin-left: 2%;
+}
+
+header{
+    height: 50px;
+    border-radius: 5px;
+    background: #ccccff
+}
+
+#logo-image{
+    height: 40px;
+    width: 40px;
+    top: 12px;
+    background: #6699ff;
+    position: absolute;
+    left: 5%;
+    border-radius: 5px;
+}
+
+#main{
+    margin-top: 3px;
+}
+
+#main article user-icon{
+    width: 50px;
+    height: 50px;
+}
+
+#main article{
+    margin-left: 260px;
+    margin-bottom: 5px;
+    
+    border: 1px solid #40658d;
+    border-radius: 5px;
+}
+
+#main article h1{
+    font-size: 2em;
+    padding: 3px 5px;
+    margin: 0px;
+    border-radius: 5px 5px 0px 0px;
+}
+#main article .user-info{
+    padding: 5px;
+    font-size: 15px;
+    
+}
+#main article .user-info label{
+   margin-right: 10px;
+}
+
+footer{
+    height: 40px;
+    vertical-align: central;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.notif{
+    width: 94%;
+    margin-left: 2%;
+    border: 1px solid #660000;
+    background: #ff9999;
+    border-radius: 5px;
+}
+.notif span{
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 5px;
+    color: #660033;
+}

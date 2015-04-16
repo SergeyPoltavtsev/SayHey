@@ -1,0 +1,8 @@
+<%@ page pageEncoding="UTF-8" %>
+        <footer>
+            <div>
+                <span>SayHey © 2015</span>
+            </div>
+        </footer>
+    </body>
+</html>

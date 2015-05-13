@@ -4,10 +4,13 @@
  * and open the template in the editor.
  */
 
+import Entity.Messages;
 import Entity.Users;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.HttpConstraint;
@@ -17,17 +20,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import session.MessageManager;
+import session.MessagesFacade;
 import session.UsersFacade;
+import session.UsersManager;
 
 /**
  *
  * @author Sergey
  */
-@WebServlet(name = "private_controller", urlPatterns = {"/profile"})
+@WebServlet(name = "private_controller", urlPatterns = {"/profile", "/searchPeople"})
 @ServletSecurity( @HttpConstraint(rolesAllowed = {"private"}) )
 public class private_controller extends HttpServlet {
     @EJB
     UsersFacade usersFacade;
+    @EJB
+    UsersManager usersManager;
+    @EJB
+    MessageManager messageManager; 
+    @EJB
+    MessagesFacade messagesFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -37,23 +49,79 @@ public class private_controller extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    @Override
+    public void init() throws ServletException {
+        List<Users> users = usersFacade.findAll();
+        getServletContext().setAttribute("users", users); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String userPath=request.getServletPath();
+        String login = request.getUserPrincipal().getName();
         if (null != userPath)
             switch (userPath) {
             case "/profile": 
-                //String login = request.getRemoteUser();
-                String login = request.getUserPrincipal().getName();
+                //String login = request.getRemoteUser();             
+                //String login = request.getUserPrincipal().getName();
                 try{
                     Users user = usersFacade.find(login);
                     request.setAttribute("user", user);
+                    
+                    String friendLogin = null;
+                    String message = null;
+                    Enumeration<String> params = request.getParameterNames();
+
+                    while (params.hasMoreElements()) {
+                        String param = params.nextElement();
+                        friendLogin="messfrom".equals(param)?request.getParameter(param):friendLogin;
+                        message = "newMessage".equals(param)?request.getParameter(param):message;
+                    }
+
+                    //open message history
+                    if(friendLogin!=null) {
+                        request.setAttribute("friend", friendLogin);
+                        refreshMessages(request, friendLogin, user.getLogin());
+                    }
+                    
+                    //save new message to DB
+                    if (message != null && friendLogin!=null) {
+                        Users friend = usersFacade.find(friendLogin);
+                        boolean success=messageManager.addMessage(friend, user, message);
+                        refreshMessages(request, friendLogin, user.getLogin());
+                    }
+                    
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-                //request.setAttribute("name", login);
+                request.getRequestDispatcher("/WEB-INF/private/profile.jsp").forward(request, response);
                 break;
+                
+            case "/searchPeople":
+                String pattern = "";
+                String addRemoveFriendLogin = null;
+                Enumeration<String> params = request.getParameterNames();
+                
+                while (params.hasMoreElements()) {
+                    String param = params.nextElement();
+                    pattern="loginPattern".equals(param)?request.getParameter(param):pattern;
+                    addRemoveFriendLogin = "personLogin".equals(param)?request.getParameter(param):addRemoveFriendLogin;
+                }
+                
+                //add/remove friend
+                if(addRemoveFriendLogin!=null) {
+                    //TODO: add/remove to db
+                    usersManager.addRemoveFriend(login,addRemoveFriendLogin);
+                    //refreshMessages(request, friendLogin, user.getLogin());
+                }
+                
+                List<Users> people = usersFacade.findAllCustomersWithName(login, pattern);
+                getServletContext().setAttribute("foundPeople", people);
+                getServletContext().setAttribute("loginPattern", pattern);
+                request.getRequestDispatcher("/WEB-INF/private/searchPeople.jsp").forward(request, response);
+                break;
+                
             case "/logout":
                 HttpSession session = request.getSession(false);
                 if (session!= null){
@@ -62,10 +130,17 @@ public class private_controller extends HttpServlet {
                 response.sendRedirect("/");
                 break;
             }
-        request.getRequestDispatcher("/WEB-INF/private/profile.jsp").forward(request, response);
+        
     }
     
-
+    private void refreshMessages (HttpServletRequest request, String friendLogin, String userLogin ) {
+        try{
+            Collection<Messages> messages = messagesFacade.findMessageHistory(friendLogin, userLogin);
+            request.setAttribute("messages", messages);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+}
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

@@ -22,7 +22,7 @@ COLLATE = utf8_general_ci;
 -- Table `mymessanger`.`messages`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `mymessanger`.`messages` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `text` VARCHAR(255) NOT NULL,
   `date` TIMESTAMP NOT NULL DEFAULT now(),
   `from_users_login` VARCHAR(15) NOT NULL,

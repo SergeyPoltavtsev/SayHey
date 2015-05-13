@@ -56,4 +56,23 @@ public class UsersManager {
         em.persist(user);
         return user;
     }
+    
+    public void addRemoveFriend(final String userLogin, final String friendLogin) {
+        try{
+            Users user = em.find(Users.class, userLogin);
+            Users friend = em.find(Users.class, friendLogin);
+            //("Users.findByLogin").setParameter("login", userLogin).getResultList();
+            if (user != null && friend != null){
+                if (user.getFriendsCollection().contains(friend)) {
+                    user.getFriendsCollection().remove(friend);
+                } else {
+                    user.getFriendsCollection().add(friend);
+                }
+                em.persist(user);
+            }
+        }catch (Exception e){
+            context.setRollbackOnly();
+            e.printStackTrace();
+        }
+    }
 }

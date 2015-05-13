@@ -10,6 +10,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -33,13 +35,15 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Messages.findAll", query = "SELECT m FROM Messages m"),
     @NamedQuery(name = "Messages.findById", query = "SELECT m FROM Messages m WHERE m.id = :id"),
     @NamedQuery(name = "Messages.findByText", query = "SELECT m FROM Messages m WHERE m.text = :text"),
-    @NamedQuery(name = "Messages.findByDate", query = "SELECT m FROM Messages m WHERE m.date = :date")})
+    @NamedQuery(name = "Messages.findByDate", query = "SELECT m FROM Messages m WHERE m.date = :date"),
+    @NamedQuery(name = "Messages.findMessageHistory", query = "SELECT m FROM Messages m WHERE (m.fromUsersLogin.login = :from and m.toUsersLogin.login = :to) OR (m.fromUsersLogin.login = :to and m.toUsersLogin.login = :from) ORDER BY m.date DESC")})
 public class Messages implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
+    //@NotNull
     @Column(name = "id")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
     @Basic(optional = false)
     @NotNull
@@ -71,6 +75,11 @@ public class Messages implements Serializable {
         this.date = date;
     }
 
+    public Messages(String text) {
+        this.text = text;
+        this.date = new Date();
+    }
+    
     public Integer getId() {
         return id;
     }

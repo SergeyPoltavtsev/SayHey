@@ -6,9 +6,11 @@
 package session;
 
 import Entity.Users;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -26,6 +28,11 @@ public class UsersFacade extends AbstractFacade<Users> {
 
     public UsersFacade() {
         super(Users.class);
+    }
+    
+    public List<Users> findAllCustomersWithName(String userLogin, String userLoginPattern) {
+        Query query = em.createNamedQuery("Users.findAllCustomersWithName").setParameter("profilelogin", userLogin).setParameter("userNamePattern", userLoginPattern+"%");       
+        return (List<Users>) query.getResultList();
     }
     
 }

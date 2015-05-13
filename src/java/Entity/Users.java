@@ -37,7 +37,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Users.findByLogin", query = "SELECT u FROM Users u WHERE u.login = :login"),
     @NamedQuery(name = "Users.findByPassword", query = "SELECT u FROM Users u WHERE u.password = :password"),
     @NamedQuery(name = "Users.findByName", query = "SELECT u FROM Users u WHERE u.name = :name"),
-    @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email")})
+    @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email"),
+    @NamedQuery(name = "Users.findAllCustomersWithName", query="SELECT u FROM Users u WHERE u.login != :profilelogin AND u.login LIKE :userNamePattern")
+})
 public class Users implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "users")
     private Collection<Groupuser> groupuserCollection = new ArrayList<Groupuser>();
@@ -64,8 +66,8 @@ public class Users implements Serializable {
         @JoinColumn(name = "user_login", referencedColumnName = "login")}, inverseJoinColumns = {
         @JoinColumn(name = "friend_login", referencedColumnName = "login")})
     @ManyToMany
-    private Collection<Users> usersCollection;
-    @ManyToMany(mappedBy = "usersCollection")
+    private Collection<Users> friendsCollection;
+    @ManyToMany(mappedBy = "friendsCollection")
     private Collection<Users> usersCollection1;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fromUsersLogin")
     private Collection<Messages> messagesCollection;
@@ -117,12 +119,12 @@ public class Users implements Serializable {
     }
 
     @XmlTransient
-    public Collection<Users> getUsersCollection() {
-        return usersCollection;
+    public Collection<Users> getFriendsCollection() {
+        return friendsCollection;
     }
 
-    public void setUsersCollection(Collection<Users> usersCollection) {
-        this.usersCollection = usersCollection;
+    public void setFriendsCollection(Collection<Users> usersCollection) {
+        this.friendsCollection = usersCollection;
     }
 
     @XmlTransient

@@ -6,9 +6,12 @@
 package session;
 
 import Entity.Messages;
+import java.util.Collection;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -28,4 +31,9 @@ public class MessagesFacade extends AbstractFacade<Messages> {
         super(Messages.class);
     }
     
+    public List<Messages> findMessageHistory(String fromUserLogin, String toUserLogin) {
+        Query query = em.createNamedQuery("Messages.findMessageHistory").setParameter("from", fromUserLogin).setParameter("to", toUserLogin);
+        query.setMaxResults(10);        
+        return (List<Messages>) query.getResultList();
+    }
 }

@@ -14,20 +14,21 @@
     </p>
 </form>
 <section> 
-    <table style="width:25%">         
-        <c:forEach var="person" items="${foundPeople}">
+    <table style="width:25%"> 
+        <c:forEach var="entry" items="${foundPeople}">
             <form method="POST" action="searchPeople">
                 <tr>
                     <td>
                         <img alt="user icon" id="user-icon" scr=""/>
                     </td>
                     <td>
-                        <h1>Login: ${person.login}</h1>
+                        <h1>Login: ${entry.key.login}</h1>
                     </td>
                     <td>
-                        <button type="submit">Add</button>
+                       
+                        <button type="submit"><c:out value ="${entry.value?'Add':'Remove'}"/></button>
                     </td>
-                    <input type ="hidden" name="personLogin" value=${person.login}>
+                    <input type ="hidden" name="personLogin" value=${entry.key.login}>
                     <input type="hidden" name="loginPattern" value="${loginPattern}"/>
                 </tr>
             </form>

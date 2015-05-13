@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.HttpConstraint;
@@ -60,13 +62,14 @@ public class private_controller extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String userPath=request.getServletPath();
         String login = request.getUserPrincipal().getName();
+        Users user = usersFacade.find(login);
+                    
         if (null != userPath)
             switch (userPath) {
             case "/profile": 
                 //String login = request.getRemoteUser();             
                 //String login = request.getUserPrincipal().getName();
                 try{
-                    Users user = usersFacade.find(login);
                     request.setAttribute("user", user);
                     
                     String friendLogin = null;
@@ -115,9 +118,21 @@ public class private_controller extends HttpServlet {
                     usersManager.addRemoveFriend(login,addRemoveFriendLogin);
                     //refreshMessages(request, friendLogin, user.getLogin());
                 }
+                //update user
+                user = usersFacade.find(login);
                 
+                Map<Users, Boolean> peopleMap = new HashMap<Users, Boolean>();
                 List<Users> people = usersFacade.findAllCustomersWithName(login, pattern);
-                getServletContext().setAttribute("foundPeople", people);
+                
+                for (Users person : people) {
+                    if(user.getFriendsCollection().contains(person)){
+                        peopleMap.put(person, false);
+                    } else {
+                        peopleMap.put(person, true);
+                    }
+                }
+                
+                getServletContext().setAttribute("foundPeople", peopleMap);
                 getServletContext().setAttribute("loginPattern", pattern);
                 request.getRequestDispatcher("/WEB-INF/private/searchPeople.jsp").forward(request, response);
                 break;

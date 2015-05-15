@@ -72,6 +72,9 @@ public class private_controller extends HttpServlet {
                 try{
                     request.setAttribute("user", user);
                     
+                    List<Users> chatsWith = messagesFacade.findAllChatsForUser(user.getLogin());
+                    request.setAttribute("chatsWith", chatsWith);
+                    
                     String friendLogin = null;
                     String message = null;
                     Enumeration<String> params = request.getParameterNames();
@@ -91,7 +94,7 @@ public class private_controller extends HttpServlet {
                     //save new message to DB
                     if (message != null && friendLogin!=null) {
                         Users friend = usersFacade.find(friendLogin);
-                        boolean success=messageManager.addMessage(friend, user, message);
+                        //boolean success=messageManager.addMessage(friend, user, message);
                         refreshMessages(request, friendLogin, user.getLogin());
                     }
                     
@@ -114,9 +117,7 @@ public class private_controller extends HttpServlet {
                 
                 //add/remove friend
                 if(addRemoveFriendLogin!=null) {
-                    //TODO: add/remove to db
                     usersManager.addRemoveFriend(login,addRemoveFriendLogin);
-                    //refreshMessages(request, friendLogin, user.getLogin());
                 }
                 //update user
                 user = usersFacade.find(login);

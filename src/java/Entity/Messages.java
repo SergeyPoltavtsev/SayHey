@@ -36,7 +36,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Messages.findById", query = "SELECT m FROM Messages m WHERE m.id = :id"),
     @NamedQuery(name = "Messages.findByText", query = "SELECT m FROM Messages m WHERE m.text = :text"),
     @NamedQuery(name = "Messages.findByDate", query = "SELECT m FROM Messages m WHERE m.date = :date"),
-    @NamedQuery(name = "Messages.findMessageHistory", query = "SELECT m FROM Messages m WHERE (m.fromUsersLogin.login = :from and m.toUsersLogin.login = :to) OR (m.fromUsersLogin.login = :to and m.toUsersLogin.login = :from) ORDER BY m.date DESC")})
+    @NamedQuery(name = "Messages.findMessageHistory", query = "SELECT m FROM Messages m WHERE (m.fromUsersLogin.login = :from and m.toUsersLogin.login = :to) OR (m.fromUsersLogin.login = :to and m.toUsersLogin.login = :from) ORDER BY m.date DESC"),
+    @NamedQuery(name = "Messages.findAllChatsForUser", query = "SELECT DISTINCT m FROM Messages m WHERE m.toUsersLogin.login=:userLogin OR m.fromUsersLogin.login=:userLogin ORDER BY m.date DESC")
+})
 public class Messages implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

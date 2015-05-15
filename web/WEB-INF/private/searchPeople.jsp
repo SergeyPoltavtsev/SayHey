@@ -25,7 +25,6 @@
                         <h1>Login: ${entry.key.login}</h1>
                     </td>
                     <td>
-                       
                         <button type="submit"><c:out value ="${entry.value?'Add':'Remove'}"/></button>
                     </td>
                     <input type ="hidden" name="personLogin" value=${entry.key.login}>

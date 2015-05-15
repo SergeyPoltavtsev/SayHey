@@ -31,9 +31,9 @@ public class MessageManager {
     private SessionContext context;
     
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public boolean addMessage(final Users friend, final Users user, final String text) {
+    public boolean addMessage(Messages message) {
         try{
-            Messages msg=newMessage(friend, user, text);
+            em.persist(message);
         }catch (Exception e){
             context.setRollbackOnly();
             e.printStackTrace();
@@ -42,13 +42,10 @@ public class MessageManager {
         return true;
     }
     
-        private Messages newMessage(Users friend, Users user, String text) {
+    public Messages newMessage(Users friend, Users user, String text) {
         Messages msg = new Messages(text);
         msg.setFromUsersLogin(user);
         msg.setToUsersLogin(friend);
-        //Groupuser privateGroup = new Groupuser("private", login);
-        //user.getGroupuserCollection().add(privateGroup);
-        em.persist(msg);
         return msg;
     }
     

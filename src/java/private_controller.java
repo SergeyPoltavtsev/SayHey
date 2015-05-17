@@ -72,19 +72,27 @@ public class private_controller extends HttpServlet {
                 try{
                     request.setAttribute("user", user);
                     
-                    List<Users> chatsWith = messagesFacade.findAllChatsForUser(user.getLogin());
-                    request.setAttribute("chatsWith", chatsWith);
-                    
                     String friendLogin = null;
                     String message = null;
+                    String peoplecolection = null;
                     Enumeration<String> params = request.getParameterNames();
 
                     while (params.hasMoreElements()) {
                         String param = params.nextElement();
                         friendLogin="messfrom".equals(param)?request.getParameter(param):friendLogin;
                         message = "newMessage".equals(param)?request.getParameter(param):message;
+                        peoplecolection = "peopleCollection".equals(param)?request.getParameter(param):peoplecolection;
                     }
-
+                    
+                    Collection<Users> chatsWith = messagesFacade.findAllChatsForUser(user.getLogin());
+                    if(peoplecolection != null) {
+                        if(peoplecolection.equals("friendsCollection")){
+                            chatsWith = user.getFriendsCollection();
+                            request.setAttribute("peopleCollection", "friendsCollection");
+                        }
+                    }
+                    request.setAttribute("chatsWith", chatsWith);    
+                    
                     //open message history
                     if(friendLogin!=null) {
                         request.setAttribute("friend", friendLogin);

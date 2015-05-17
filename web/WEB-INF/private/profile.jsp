@@ -19,6 +19,8 @@ ${param.name}
         </article>
 </section>
 
+<hr/>
+        
 <form method="POST" action="searchPeople">
     <p>
         <label for="loginPattern">Search for person:</label>
@@ -28,77 +30,74 @@ ${param.name}
         <button type="submit">Search</button>
     </p>
 </form>
-            
-<section> 
-    <table style="width:25%">         
+        
+<hr/>
+
+<div class="peopleChoise">
+    <form method="POST" action="profile">
+        <div>
+            <input type="hidden" value="chatCollection" name="peopleCollection" id="peopleCollection" />
+            <input value="Chats" type="submit">
+        </div>
+    </form>
+
+    <form method="POST" action="profile">
+        <div>
+            <input type="hidden" value="friendsCollection" name="peopleCollection" id="peopleCollection" />
+            <input value="Friends" type="submit">
+        </div>
+    </form>
+</div>
+
+
+<section > 
+    <table style="width:25%" id="peopleTable">         
         <c:forEach var="friend" items="${chatsWith}">
             <tr>
                 <td>
                     <a href="#"><img alt="user icon" id="user-icon" scr=""/></a>
                 </td>
                 <td>
-                    <h1>Login: <a href="profile?messfrom=${friend.login}">${friend.login}</a></h1>
+                    <p>Login: <a href="profile?messfrom=${friend.login}&peopleCollection=${peopleCollection}">${friend.login}</a></p>
                 </td>
             </tr>
         </c:forEach>
     <table>
-</section>   
+</section>
 
-<section> 
-    <table style="width:50%" id="messageTable">         
-        <c:forEach var="message" items="${messages}">
-            <tr>
-                <td>
-                    message from ${message.fromUsersLogin.login} to ${message.toUsersLogin.login} text: ${message.text}  ${message.date}
-                </td>
-            </tr>
-        </c:forEach>
-    <table>
-        
-        
-        <c:if test="${not empty friend}">
-            <p>
-                New message:<Br>
-                <textarea name="newMessage" cols="40" rows="3" id="newMessage"></textarea>
-            </p>
-            <p>
-                <input value="Send" onclick="sendMessage('${user.login}','${friend}');" type="button">
-            </p>
-            <hr/>
-            <textarea readonly="readonly" id="messages" rows="15" cols="60"></textarea>
-        </c:if>
-        
-        <!--<c:if test="${not empty friend}">
-            <form method="POST" action="profile">
-                <p>
-                    New message:<Br>
-                    <textarea name="newMessage" cols="40" rows="3" id="newMessage"></textarea>
-                </p>
-                <p>
-                    <button type="submit">Send</button>
-                </p>
-                <input type ="hidden" name="messfrom" value=${friend}>
-            </form>
-        </c:if>-->
-</section> 
-   
+
+<c:if test="${not empty friend}">
+    <section> 
+        <hr/>
+        <p>
+            <b>
+            Chat with ${friend}
+            </b>
+        </p> 
+        <table style="width:50%" id="messageTable">         
+            <c:forEach var="message" items="${messages}">
+                <tr>
+                    <td>
+                        message from ${message.fromUsersLogin.login} to ${message.toUsersLogin.login} text: ${message.text}  ${message.date}
+                    </td>
+                </tr>
+            </c:forEach>
+        <table>
+    
+        <p>
+            New message:<Br>
+            <textarea name="newMessage" cols="40" rows="3" id="newMessage"></textarea>
+        </p>
+        <p>
+            <input value="Send" onclick="sendMessage('${user.login}','${friend}');" type="button">
+        </p>  
+    </section> 
+</c:if> 
+
 <script type="text/javascript">
     var webSocket = new WebSocket("ws://localhost:8080/Messanger/websocket");
-    var messages=document.getElementById("messages");
     var message=document.getElementById("newMessage");
-
-    webSocket.onopen=function(message){
-        messages.value+="Connection established \n";
-    };
-
-    webSocket.onclose=function(message){
-        messages.value+="Connection closed \n";
-    }
-
-    webSocket.onerror=function (message){
-        messages.value+="Error \n";
-    }
-
+    
     function sendMessage(userLogin, friendLogin){
         var msg = message.value;
 
@@ -109,8 +108,6 @@ ${param.name}
             text: msg
         };
         webSocket.send(JSON.stringify(MessageAction));
-
-        messages.value+="Send to server:"+message.value+" \n";
         message.value="";
     }
 
@@ -124,10 +121,8 @@ ${param.name}
             var cell1 = row.insertCell(0);
 
             // Add some text to the new cells:
-           //message from ${message.fromUsersLogin.login} to ${message.toUsersLogin.login} text: ${message.text}  ${message.date}
-            cell1.innerHTML = "message from " + msg.from + " to " + msg.to + " text: " + msg.text;
-
+            cell1.innerHTML = "message from " + msg.from + " to " + msg.to + " text: " + msg.text + " date: " + msg.date;
         }
-        messages.value+="Get from server: "+message.data+" \n";
     };
+
 </script>

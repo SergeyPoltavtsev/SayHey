@@ -20,12 +20,9 @@ header{
 }
 
 #logo-image{
-    height: 40px;
-    width: 40px;
-    top: 12px;
-    background: #6699ff;
+    top: 25px;
     position: absolute;
-    left: 5%;
+    left: 3%;
     border-radius: 5px;
 }
 
@@ -82,4 +79,14 @@ footer{
     letter-spacing: 1px;
     margin: 5px;
     color: #660033;
+}
+
+.peopleChoise form,
+.peopleChoise form div {
+    display: inline;
+}
+
+.peopleChoise input {
+    display: inline;
+    vertical-align: middle;
 }

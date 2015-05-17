@@ -4,7 +4,7 @@
         <p><strong>Login:</strong>
             <input placeholder="Enter login" type="text" size="15" name="j_username"></p>
         <p><strong>Password:</strong>
-            <input placeholder="enter password" type="password" size="45" name="j_password"></p>
+            <input placeholder="enter password" type="password" size="15" name="j_password"></p>
         <p><input type="submit" name="authorize" value="log in"></p>
     </div>
 </form>

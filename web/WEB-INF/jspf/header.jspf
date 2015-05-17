@@ -10,5 +10,5 @@
     </head>
     <body>
         <header>
-            <a href="/Messanger"><img alt="Logo" id="logo-image" src="#"/></a>
+            <a href="/Messanger" id="logo-image">Home</a>
         </header>
